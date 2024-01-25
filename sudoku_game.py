@@ -1,11 +1,11 @@
 # Shaurya Jeloka
 # 1/23/2024
 
-# This program creates the command-line interface for the sudoku game using the argparse package 
-# and defines the code for running the game. This program imports the sudoku_funcs module and relies
-# heavily on the functions defined in sudoku_funcs.py to run the sudoku game. This program uses
-# while loops, conditional statements, user inputs, lists, and parsers to perform its objectives. 
-
+# This program creates the command-line interface for the sudoku game using 
+# the argparse package and defines the code for running the game. This program 
+# imports the sudoku_funcs module and relies heavily on the functions defined 
+# in sudoku_funcs.py to run the sudoku game. This program uses while loops, 
+# conditional statements, user inputs, lists, and parsers to perform its objectives. 
 
 import argparse
 import sudoku_funcs as funcs

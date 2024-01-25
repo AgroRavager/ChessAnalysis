@@ -1,12 +1,14 @@
 # Shaurya Jeloka
 # 1/23/2024
 
-# This program provides functions for multiple purposes related to my command-line interface sudoku game: 
-# web scraping a sudoku puzzle from the internet using the Selenium package,validating the correctness of 
-# a number in a specified cell, finding empty cells in the sudoku puzzle, solving the puzzle using a 
-# recursive backtracking algorithm, and printing the puzzle in a formatted manner. Only the web scraping
-# function relies on any external packages to perform its tasks. This program relies on for loops, conditional
-# statements, one-dimensional and two-dimensional lists, recursion, and string manipulation to perform its tasks.
+# This program provides functions for multiple purposes related to my command-line 
+# interface sudoku game: web scraping a sudoku puzzle from the internet using the 
+# Selenium package,validating the correctness of a number in a specified cell, 
+# finding empty cells in the sudoku puzzle, solving the puzzle using a recursive 
+# backtracking algorithm, and printing the puzzle in a formatted manner. Only the 
+# web scraping function relies on any external packages to perform its tasks. This 
+# program relies on for loops, conditional statements, one-dimensional and 
+# two-dimensional lists, recursion, and string manipulation to perform its tasks.
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
