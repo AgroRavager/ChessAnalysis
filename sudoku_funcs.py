@@ -60,6 +60,7 @@ def get_puzzle():
         
     # Close the WebDriver
     driver.quit()
+    
     # Return 2d sudoku puzzle list
     return puzzle_data
 
