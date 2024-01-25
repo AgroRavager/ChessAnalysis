@@ -57,7 +57,6 @@ for group in labels:
         'black_win_rate': win_rate_for_color(group, 'black'),
         'total_matches': count_matches_in_group(group)
     }
-
 # Convert the results to a pandas DataFrame for better visualization
 win_rates_df = pd.DataFrame(win_rates).T
 #Create win_rate_diff column to show difference between white win rate and black win rate
@@ -65,12 +64,15 @@ win_rates_df['win_rate_diff'] = win_rates_df['white_win_rate'] - win_rates_df['b
 #reorder columns so win_rate_diff is before total_matches
 win_rates_df = win_rates_df[['white_win_rate', 'black_win_rate', 'win_rate_diff', 'total_matches']]
 
+
 #Filter games_df dataframe to gamesrated (with rated games) and gamesnotrated (with unrated games)
 gamesrated = games_df[games_df['rated']]
 gamesnotrated = games_df[~games_df['rated']]
 
-#define unrated_pie_chart() function to draw pie chart for win percentages in unrated matches
-def unrated_pie_chart():
+#neha fix
+#define rating_win_pie_chart() function to draw pie chart for win percentages 
+#in rated and unrated matches
+def rating_win_pie_chart(rating_df, string_rated):
     #label the three segments of the pie chart
     labels = 'White', 'Black', 'Stalemate'
 
@@ -78,58 +80,38 @@ def unrated_pie_chart():
     #win percentage for white is found by multiplying the number of matches that
     #white won in the dataframe by 100 and then dividing by the total number of 
     #matches in the datframe
-    sizes = [len(gamesnotrated.query("winner == 'white'"))*100/len(gamesnotrated), 
-            len(gamesnotrated.query("winner == 'black'"))*100/len(gamesnotrated), 
-            len(gamesnotrated.query("winner == 'draw'"))*100/len(gamesnotrated)]
+    sizes = [len(rating_df.query("winner == 'white'"))*100/len(rating_df), 
+            len(rating_df.query("winner == 'black'"))*100/len(rating_df), 
+            len(rating_df.query("winner == 'draw'"))*100/len(rating_df)]
     fig1, ax1 = plt.subplots()
 
     #define visual specs and title, then display the plot
     ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
             shadow=True, startangle=90)
     ax1.axis('equal') 
-    plt.title('Win percentages for unrated matches')
+    plt.title(f'Win percentages for {string_rated} matches')
     plt.show()
 
-
-#define rated_pie_chart() function to draw pie chart for win percentages in rated matches
-def rated_pie_chart():
-    #label the three segments of the pie chart
-    labels = 'White', 'Black', 'Stalemate'
-
-    #determine percentages for each segment by filtering dataframe. For example,
-    #win percentage for white is found by multiplying the number of matches that
-    #white won in the dataframe by 100 and then dividing by the total number of 
-    #matches in the datframe
-    sizes = [len(gamesrated.query("winner == 'white'"))*100/len(gamesrated), 
-            len(gamesrated.query("winner == 'black'"))*100/len(gamesrated), 
-            len(gamesrated.query("winner == 'draw'"))*100/len(gamesrated)]
-    fig1, ax1 = plt.subplots()
-
-    #define visual specs and title, then display the plot
-    ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
-            shadow=True, startangle=90)
-    ax1.axis('equal') 
-    plt.title('Win percentages for rated matches')
-    plt.show()
-
+#neha add
 #turns vs rating chart
 def turnsvrating():
-    games150 = games_df.sample(500)
+    games300 = games_df.sample(300)
     
     intercept, slope = np.polynomial.polynomial.polyfit(
-        games150.avrating,
-        games150.turns,
+        games300.avrating,
+        games300.turns,
         1)
-    ratings = np.array([min(games150.avrating), max(games150.avrating)])
+    ratings = np.array([min(games300.avrating), max(games300.avrating)])
     turns = intercept + slope * ratings
     
-    plt.scatter("avrating", "turns", data=games150)
+    plt.scatter("avrating", "turns", data=games300)
     plt.plot(ratings, turns, color="magenta")
     plt.title("Rating vs Number of Turns")
     plt.xlabel("Average rating of the players")
     plt.ylabel("Number of turns played in the match")
     plt.show()
 
+#neha replace
 # Analysis 1: Time Control Analysis (Inferred from Number of Turns)
 # Categorize games based on the number of turns
 bins = [0, 30, 60, 90, 120, 150, float('inf')]
@@ -137,10 +119,12 @@ labels = ['0-30', '31-60', '61-90', '91-120', '121-150', '150+']
 games_df['turns_category'] = pd.cut(games_df['turns'], bins=bins, labels=labels, right=False)
 
 # Calculate win rates for each turns category
-turns_win_rates = games_df.groupby('turns_category')['winner'].value_counts(normalize=True).unstack().fillna(0)
+turns_win_rates = (games_df.groupby('turns_category')['winner']
+                          .value_counts(normalize=True)
+                          .unstack()
+                          .fillna(0))
 
 
-freq_black = games_df[games_df['winner']=='black']['opening_name'].value_counts()
 
 def opening_win_percentage(opening, winner):
     # Filter the DataFrame once where r1 is greater than r2
@@ -148,43 +132,37 @@ def opening_win_percentage(opening, winner):
     # Calculate the percentage of games won by 'winner' in the filtered DataFrame
     percentage_won = (filtered_games['winner'] == winner).mean() * 100
     return percentage_won
+#neha comment
+def opening_stats(color):
+    freq_color = games_df[games_df['winner']==color]['opening_name'].value_counts()
+    color_openings = {}
 
-black_openings = {}
-for opening in freq_black.head(5).index:
-    black_openings[opening] = opening_win_percentage(opening, 'black')
-#sort black_openings dict by value here
+    for opening in freq_color.head(10).index:
+        color_openings[opening] = opening_win_percentage(opening, color)
 
-#maybe increase width of the plot here?
-def black_openings_win_percentages():
+    color_openings = dict(sorted(color_openings.items(), key=lambda item: item[1], 
+                     reverse = True))
+    
+    other_openings = ~games_df['opening_name'].isin(list(color_openings.keys()))
+    proportion = round((len(games_df[other_openings & (games_df['winner'] == color)])
+                         * 100 / len(games_df[other_openings])), 2)
+    color_openings['Other openings'] = proportion
+
+    return freq_color, color_openings
+
+freq_black, black_openings = opening_stats('black')
+freq_white, white_openings = opening_stats('white')
+
+def openings_dict_bar_chart(openings_dict):
     fig = plt.figure()
     ax = fig.add_axes([0,0,1,1])
-    openings = [i for i in black_openings.keys()]
-    #openings.append('Other openings')
-    percentages = [black_openings[i] for i in openings]
-    #percentages.append(other_openings_win_percent_black)
-    #shortening name here so it fits into plot
-    openings = [i[:15] for i in openings]
+    openings = [i for i in openings_dict.keys()]
+    percentages = [openings_dict[i] for i in openings]
     ax.bar(openings, percentages)
+    plt.xticks(rotation=90)
+    plt.figure(figsize=(10, 6))
     plt.show()
 
-freq_white = games_df[games_df['winner']=='white']['opening_name'].value_counts()
-white_openings = {}
-for opening in freq_white.head(5).index:
-    white_openings[opening] = opening_win_percentage(opening, 'white')
-#sort white_openings dict by value here
-
-#maybe increase width of the plot here?
-def white_openings_win_percentages():
-    fig = plt.figure()
-    ax = fig.add_axes([0,0,1,1])
-    openings = [i for i in white_openings.keys()]
-    #openings.append('Other openings')
-    percentages = [white_openings[i] for i in openings]
-    #percentages.append(other_openings_win_percent_white)
-    #shortening name here so it fits into plot
-    openings = [i[:15] for i in openings]
-    ax.bar(openings, percentages)
-    plt.show()
 
 
 #define plotting functions for interactive visualizer
@@ -201,7 +179,8 @@ def move_freq_plot(games):
     plt.xlabel('Move')
     plt.ylabel('Frequency')
     plt.show()
-    
+
+#neha
 def win_percentage_plot(games):
     labels = 'White', 'Black', 'Stalemate'
     sizes = [len(games.query("winner == 'white'"))*100/len(games), 
@@ -245,6 +224,7 @@ def show_data(opening_name):
     #get dataframe with calculated mean values for each column
     games_describe = games.describe().loc['mean']
     
+    #neha
     #display statistics and plots about chosen opening in first output window
     with out:
         print(f"Games in dataset with this opening: {len(games)}")
@@ -265,7 +245,7 @@ def show_data(opening_name):
                      .assign(victory = lambda df: df['victory_status'])
                      #display relevant columns to user
                      [['avrating', 'white_rating', 'black_rating', 'winner', 'victory', 'turns', 'id']]
-                     #hide index
+                     #hide index column
                      .style.hide())
     
 #create output windows
@@ -313,6 +293,8 @@ text_box_seconds = widgets.Textarea(
     layout={'width': '350px', 'height': '25px'},
     style={'description_width': 'initial'})
 
+
+#neha
 simulate_button = widgets.Button(description = 'simulate')
 def simulate(button = None):
     with out3:
