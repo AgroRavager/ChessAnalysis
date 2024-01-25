@@ -24,13 +24,14 @@ def getwinners(r1, r2, winner):
 games_df['avrating'] = (games_df['white_rating']+games_df['black_rating'])/2
 
 
+
+# Define bins and labels for rating groups
+bins = [0, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600]
+labels = ['0-1200', '1200-1400', '1400-1600', '1600-1800', 
+         '1800-2000', '2000-2200', '2200-2400', '2400-2600']
+
 # Define function to calculate win rate for a color within a rating group
 def win_rate_for_color(group, color):
-    # Define the rating groups
-    bins = [0, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600]
-    labels = ['0-1200', '1200-1400', '1400-1600', '1600-1800', 
-              '1800-2000', '2000-2200', '2200-2400', '2400-2600']
-
     #add new column to dataframe that places each match within its respective rating group using pd.cut() function
     games_df['rating_group'] = pd.cut(games_df['avrating'], bins = bins, labels = labels, right = False)
 
@@ -49,8 +50,6 @@ def count_matches_in_group(group):
 
 # Calculate win rates and total matches played for each group and color using a for loop
 win_rates = {}
-labels = ['0-1200', '1200-1400', '1400-1600', '1600-1800', 
-              '1800-2000', '2000-2200', '2200-2400', '2400-2600']
 for group in labels:
     win_rates[group] = {
         'white_win_rate': win_rate_for_color(group, 'white'),
@@ -238,13 +237,15 @@ def show_data(opening_name):
     
     #display dataframe of matches with chosen opening
     with out2:
-        #convert avrating column to integer type so the dataframe can be sorted by it
+        #convert avrating column to int so the dataframe can be sorted by it
         display(games.assign(avrating = lambda x: x['avrating'].astype(int))
                      .sort_values(by = 'avrating', ascending = False)
-                     #copy victory_status column's data into new victory column to shorten dataframe width
+                     #copy victory_status column's data into new victory column 
+                     #to shorten dataframe width
                      .assign(victory = lambda df: df['victory_status'])
                      #display relevant columns to user
-                     [['avrating', 'white_rating', 'black_rating', 'winner', 'victory', 'turns', 'id']]
+                     [['avrating', 'white_rating', 'black_rating', 'winner', 
+                     'victory', 'turns', 'id']]
                      #hide index column
                      .style.hide())
     
@@ -265,7 +266,9 @@ clear_button.on_click(clear_print)
 
 
 #get all opening names used over 25 times in dataset
-options = games_df.opening_name.value_counts().loc[lambda x: x > 25].index.sort_values()
+options = (games_df.opening_name.value_counts()
+                               .loc[lambda x: x > 25]
+                               .index.sort_values())
 # Create a Dropdown widget with list of selected opening names
 dropdown = widgets.Dropdown(options = options,
     value=None,  # Default selected option
@@ -303,7 +306,8 @@ def simulate(button = None):
         display(SVG(board_svg))
 
         # Replace this with your actual chess moves
-        descriptive_moves = games_df.loc[games_df['id'] == text_box_id.value, 'moves'].values[0]
+        descriptive_moves = games_df.loc[games_df['id'] == text_box_id.value, 
+                                         'moves'].values[0]
 
         # Convert descriptive moves to UCI format
         uci_moves = []
@@ -321,6 +325,6 @@ def simulate(button = None):
             clear_output(wait=True)
             board_svg = chess.svg.board(board=board)
             display(SVG(board_svg))
-            time.sleep(float(text_box_seconds.value))  # Adjust the speed of the animation
+            time.sleep(float(text_box_seconds.value)) 
 simulate_button.on_click(simulate)    
     
