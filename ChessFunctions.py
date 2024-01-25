@@ -263,7 +263,7 @@ def rating_difference_impact(games):
     bins = [-400, -200, -100, 0, 100, 200, 400]
     labels = ['<-200', '-200 to -100', '-100 to 0', '0 to 100', '100 to 200', '200+']
     
-    #use pd.cut() function to place each game into its respective bin
+    # Use pd.cut() function to place each game into its respective bin
     games['rating_difference_group'] = pd.cut(games['rating_difference'], bins=bins, 
                                               labels=labels, right=False)
 
@@ -285,7 +285,7 @@ def rating_difference_impact(games):
 pd.set_option('display.max_rows', 999)
 pd.set_option('display.max_colwidth', None)
 
-#define show_data function for interactive visualizer
+# Define show_data function for interactive visualizer
 def show_data(opening_name):
     # Filter dataframe to matches with user chosen opening name
     games = games_df[games_df['opening_name'] == opening_name]
