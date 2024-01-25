@@ -60,7 +60,7 @@ def get_puzzle():
         
     # Close the WebDriver
     driver.quit()
-    
+
     # Return 2d sudoku puzzle list
     return puzzle_data
 
@@ -74,7 +74,7 @@ def check_valid(puzzle, row, col, num):
         if puzzle[i][col] == num:
             return False
         
-    # # Check for the number in the specified row
+    # Check for the number in the specified row
     for i in range(9):
         # If a duplicate value is found, return False
         if puzzle[row][i] == num:
@@ -119,7 +119,7 @@ def solve_puzzle(puzzle):
             # Plug in first valid number found 
             puzzle[row][col] = num
 
-            # Recusrively call function again to solve remaining puzzle
+            # Recursively call function again to solve remaining puzzle
             if solve_puzzle(puzzle):
                 # If the puzzle is successfully solved with the current number, 
                 # return True
