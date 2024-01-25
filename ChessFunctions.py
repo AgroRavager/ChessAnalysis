@@ -47,7 +47,8 @@ rating_bins = [0, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600]
 rating_labels = ['0-1200', '1200-1400', '1400-1600', '1600-1800', 
          '1800-2000', '2000-2200', '2200-2400', '2400-2600']
 
-# Define function to calculate win rate for a color within a rating group
+# Define win_rate_for_color_group function to calculate win rate for a color 
+# within a specified rating group
 def win_rate_for_color(group, color):
     # Add new column to dataframe that places each match within its respective 
     # rating group using pd.cut() function
@@ -64,7 +65,8 @@ def win_rate_for_color(group, color):
     else:
         return 0
 
-# Define function to calculate the number of matches in each rating group
+# Define count_matches_in_group function to calculate the number of matches 
+# in each rating group
 def count_matches_in_group(group):
     return len(games_df[games_df['rating_group'] == group])
 
@@ -95,7 +97,7 @@ win_rates_df = win_rates_df[['white_win_rate', 'black_win_rate',
 gamesrated = games_df[games_df['rated']]
 gamesnotrated = games_df[~games_df['rated']]
 
-# Define rating_win_pie_chart() function to draw pie chart for win percentages 
+# Define rating_win_pie_chart function to draw pie chart for win percentages 
 # for each color in a rating_df passed in. 
 def rating_win_pie_chart(rating_df, string_rated):
     # Label the three categories of the pie chart
