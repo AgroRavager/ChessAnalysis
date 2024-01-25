@@ -21,19 +21,19 @@ def getwinners(r1, r2, winner):
     return percentage_won
 
 #create new avrating column that takes the average of the black rating and white rating in the match
-games_df['avrating'] = (games_df['white_rating']+games_df['black_rating'])/2
+games_df['avrating'] = (games_df['white_rating'] + games_df['black_rating']) / 2
 
 
 
 # Define bins and labels for rating groups
-bins = [0, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600]
-labels = ['0-1200', '1200-1400', '1400-1600', '1600-1800', 
+rating_bins = [0, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600]
+rating_labels = ['0-1200', '1200-1400', '1400-1600', '1600-1800', 
          '1800-2000', '2000-2200', '2200-2400', '2400-2600']
 
 # Define function to calculate win rate for a color within a rating group
 def win_rate_for_color(group, color):
     #add new column to dataframe that places each match within its respective rating group using pd.cut() function
-    games_df['rating_group'] = pd.cut(games_df['avrating'], bins = bins, labels = labels, right = False)
+    games_df['rating_group'] = pd.cut(games_df['avrating'], bins = rating_bins, labels = rating_labels, right = False)
 
     #filter dataframe to get desired rating group and winner
     games_in_group = games_df[games_df['rating_group'] == group]
@@ -50,7 +50,7 @@ def count_matches_in_group(group):
 
 # Calculate win rates and total matches played for each group and color using a for loop
 win_rates = {}
-for group in labels:
+for group in rating_labels:
     win_rates[group] = {
         'white_win_rate': win_rate_for_color(group, 'white'),
         'black_win_rate': win_rate_for_color(group, 'black'),
@@ -113,9 +113,9 @@ def turnsvrating():
 #neha replace
 # Analysis 1: Time Control Analysis (Inferred from Number of Turns)
 # Categorize games based on the number of turns
-bins = [0, 30, 60, 90, 120, 150, float('inf')]
-labels = ['0-30', '31-60', '61-90', '91-120', '121-150', '150+']
-games_df['turns_category'] = pd.cut(games_df['turns'], bins=bins, labels=labels, right=False)
+turn_bins = [0, 30, 60, 90, 120, 150, float('inf')]
+turn_labels = ['0-30', '31-60', '61-90', '91-120', '121-150', '150+']
+games_df['turns_category'] = pd.cut(games_df['turns'], bins=turn_bins, labels=turn_labels, right=False)
 
 # Calculate win rates for each turns category
 turns_win_rates = (games_df.groupby('turns_category')['winner']
