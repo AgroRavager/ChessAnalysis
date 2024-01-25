@@ -98,7 +98,7 @@ gamesrated = games_df[games_df['rated']]
 gamesnotrated = games_df[~games_df['rated']]
 
 # Define rating_win_pie_chart function to draw pie chart for win percentages 
-# for each color in a rating_df passed in. 
+# for each color in a rating_df passed in
 def rating_win_pie_chart(rating_df, string_rated):
     # Label the three categories of the pie chart
     labels = 'White', 'Black', 'Draw'
@@ -144,7 +144,7 @@ def turnsvrating():
 
 # Conduct time analysis by categorizing chess games into groups based on the total
 # number of turns played to understand how the length of the game impacts the win 
-# rates for different colors.
+# rates for different colors
 # Define bins and labels for categorizing games by their turn count
 turn_bins = [0, 30, 60, 90, 120, 150, float('inf')]
 turn_labels = ['0-30', '31-60', '61-90', '91-120', '121-150', '150+']
@@ -350,7 +350,7 @@ dropdown = widgets.Dropdown(options = options,
     description='Select an opening:',
     style={'description_width': 'initial'})
 
-# Function to handle the dropdown value change event
+# Define on_dropdown_change function to handle the dropdown value change event
 def on_dropdown_change(change):
     selected_option = change['new']
     show_data(selected_option)   
