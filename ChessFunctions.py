@@ -10,8 +10,8 @@
 # openings. Then, we also used ipywidgets, chess, and IPython display to create
 # an interactive widget where players can choose an opening, and then be 
 # presented with tons of matches and statistics on it. Then, they can choose a
-# match and see it simulated on a chess board. This file is the backend necessary
-# to perform all of these calculations, and is imported by the front-end 
+# match and see it simulated on a chess board. This file is the back end necessary
+# to perform all of these calculations, and is imported by the front end 
 # visualizer in jupyter notebook. 
 
 import pandas as pd
